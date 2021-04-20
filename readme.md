@@ -1,57 +1,94 @@
-# 解决方案介绍
-## 1. 算法设计
-项目首先通过PolarMask得出视频第一帧的annotation，然后通过对frtm-vos进行改进，设计mtmfi-vos网络对视频进行半监督目标分割，最终得到视频所有帧的annotation。
-## 2. 模型结构
-基于frtm-vos改进的mtmfi-vos网络结构如下：
+# MTMFI-VOS
+*Learning video object segmentation with multi-level target models and feature integration*
 
-![Alt text](./user_data/tmp_data/mtmfi-vos.jpg)
+## Notice  
+the network is based on FRTM-VOS [[code]](https://github.com/andr345/frtm-vos) [[paper]](https://openaccess.thecvf.com/content_CVPR_2020/papers/Robinson_Learning_Fast_and_Robust_Target_Models_for_Video_Object_Segmentation_CVPR_2020_paper.pdf), which is proposed in "Learning Fast and Robust Target Models for Video Object Segmentation"(*CVPR2020*).
 
-主要创新点如下：
-1. 设计多尺度粗分割模型 (Multi-scale Target Models, MTM) 捕获更多目标外观细节，以下成MTM
-2. 设计特征整合模块 (feature integration, FI) 突出帧间目标动态变化情况，以下成FI
+## Display
+![Alt text](./pic/dogs-jump.gif)
 
-## 3. 训练推理
-### 1） 训练阶段
-由于时间紧迫（4月10日才参加），仅使用Davis数据与Youtube数据集进行训练，epoch为260，优化器为Adam，损失函数为BCEloss，学习率为1e-3（前127个epoch，而后衰减至1e-4）
+![Alt text](./pic/625801.gif)
+## Network Architecture  
+![Alt text](./pic/mtmfi-vos.jpg)
 
-项目共提供3个训练模型：
-* resnet101_all_bise_mini_ep0205.pth：使用YouTube+Davis进行训练，网络包含MTM和FI结构
-* resnet101_all_l3+l4_ep0260.pth：使用YouTube+Davis进行训练，网络仅包含MTM结构
-* resnet101_dv_l3+l4_ep0260.pth：仅使用Davis进行训练，网络包含MTM和FI结构
+## Requirments
+* python 3.7.0
+* PyTorch 1.6.0
+* CUDA10.0 + cudnn7.6.4
+* scipy scikit-image tqdm easydict opencv-python
+  
+## DataSets  
 
-### 2） 推理阶段
-#### 1. 将test的videos和各个videos的第一帧annotation（由PolarMask生成）缩放至480p（文件路径在code/resize.py内修改）
-    python code/resize.py
-#### 2. 进行测试集的推理
-    python code/inference.py --dev cuda:0 --dset ali2021val --seg bise --model resnet101_all_bise_mini_ep0205.pth 
-注：  
-+ --dev：GPU配置  
-+ --dset：数据集选择：   
-本项目-***ali2021val***  
-Davis16-***dv2016val***  
-Davis17-***dv2017val***  
-Youtube-***yt2018val***  
-+ --seg：分割模块选择：  
-包含MTM模块-***initial***   
-包含MTM以及FI模块-***bise***  
-+ --model：模型选择  
-resnet101_all_bise_mini_ep0205.pth  
-resnet101_all_l3+l4_ep0260.pth  
-resnet101_dv_l3+l4_ep0260.pth  
-#### 3. 将推理结果恢复至原分辨率（文件路径在code/inverse_resize.py内修改）
-    python code/inverse_resize.py
-## 4. 实现细节
-团队软硬件配置：  
-GPU：Nvidia RTX2080Ti CUDA10.0+cudnn7.6.4  
-服务器环境：Ubuntu 18.04.5 LTS 
-PyTorch版本：1.6.0  
-必要安装库：  
-scipy==1.5.2   
-scikit-image==0.17.2   
-tqdm==4.60.0   
-opencv-python==4.4.0.42   
-easydict==1.9   
-numpy==1.19.1  
+### DAVIS
+goto [website](https://davischallenge.org/davis2017/code.html#semisupervised) to download datasets:  
+**TrainVal**(480p) for train and validation, **Test-Dev 2017**(480p) for test
 
-**测试集问题**：  
-”639110“序列缺少第二帧 复制第三帧结果至第二帧
+### YouTube-VOS
+goto [website](https://drive.google.com/drive/folders/1bI5J1H3mxsIGo7Kp-pPZU8i6rnykOw7f) to download datasets and place it in this directory structure:
+
+    /path/to/ytvos2018
+    |-- train/
+    |-- train_all_frames/
+    |-- valid/
+    |-- valid_all_frames/
+
+### Alibaba media
+this compeitition aims to segment the people in videos and doesn't supply the first annotations. Thus, we use PolarMask [[code]](https://github.com/xieenze/PolarMask) [[paper]](https://arxiv.org/pdf/1909.13226.pdf)to produce the masks of the first frame on each video.  
+the test dataset is tidying, just wait:)
+## Models  
+| backbone | datasets | components | link |  
+| :---: | :---: | :---: | :---: |  
+| ResNet-101 | DAVIS | MTM | - |
+| ResNet-101 | DAVIS+YouTube | MTM | [download](https://www.dropbox.com/s/tcsosmotc48euc3/resnet101_all_mtm.pth?dl=0) | 
+| ResNet-101 | DAVIS | MTMFI | [download](https://www.dropbox.com/s/cr3rixvkdrb57xn/resnet101_dv_mtmfi.pth?dl=0) | 
+| ResNet-101 | DAVIS+YouTube | MTMFI | - | 
+## Evaluate
+inference the video and evaluate the inference results  
+
+    python evaluate.py --model <weight-name> --dset dv2016val --seg initial (--fast) --dev cuda:0
+* `--model` is the name of the checkpoint to use in the `weights ` directory.
+* `--dset` is one of   
+  | Name | Description |
+  | ---- | ---- |
+  | dv2016val | DAVIS 2016 validation set |
+  | dv2017val | DAVIS 2017 validation set |
+  | yt2018jjval | the split of YouTubeVOS 2018 "train_all_frames" |
+  | yt2018val | YouTubeVOS 2018 official "valid_all_frames" set |
+* `--bise` has two mode: `initial`has only MTM, `bise` has both MTM and FI
+* `--fast` reduces the number of optimizer iterations to  increase the speed
+* `--dev` denotes GPU id
+### - example
+use model(only DAVIS) with MTM to evaluate DAVIS 2016 validation set in fast mode:  
+
+    python evaluate.py --model  resnet101_dv_mtmfi.pth --dset dv2016val --seg bise --fast --dev cuda:0
+use model(DAVIS+YouTube-VOS)  with MTMFI to evaluate YouTubeVOS 2018 official validation set in original mode:  
+
+    python evaluate.py --model  resnet101_all_mtmfi.pth --dset dv2016test --seg bise --dev cuda:0
+
+## Inference
+just inference the video
+
+    python inference.py --model <weight-name> --dset dv2016val (--fast)
+* `--model` is the name of the checkpoint to use in the `weights ` directory.
+* `--dset` is one of   
+  | Name | Description |
+  | ---- | ---- |
+  | dv2016test | DAVIS 2016 test-dev set |
+  | dv2017test | DAVIS 2017 test-dev set |
+  | ali2021test | Alibaba 2021 test set |
+  | yt2018jjval | the split of YouTubeVOS 2018 "train_all_frames" |
+  | yt2018val | YouTubeVOS 2018 official "valid_all_frames" set |
+* `--bise` has two mode: `initial`has only MTM, `bise` has both MTM and FI
+* `--fast` reduces the number of optimizer iterations to  increase the speed
+* `--dev` denotes GPU id
+  
+### Specially for Alibaba DataSet
+Alibaba's data set has a higher resolution and needs to be scaled to 480p first:
+
+    python ali/resize.py
+Then, test the video sets like:
+
+    python inference.py --dev cuda:0 --dset ali2021val --seg bise --model resnet101_all_mtmfi.pth
+Finally, restore the resolution:
+
+    python ali/inverse_resize.py
