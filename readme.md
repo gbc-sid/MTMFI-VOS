@@ -1,5 +1,5 @@
 # MTMFI-VOS
-*Learning video object segmentation with multi-level target models and feature integration*
+*Learning video object segmentation with multi-level target models and feature integration.*
 
 ## Notice  
 the network is based on FRTM-VOS [[code]](https://github.com/andr345/frtm-vos) [[paper]](https://openaccess.thecvf.com/content_CVPR_2020/papers/Robinson_Learning_Fast_and_Robust_Target_Models_for_Video_Object_Segmentation_CVPR_2020_paper.pdf), which is proposed in "***Learning Fast and Robust Target Models for Video Object Segmentation***"(*CVPR2020*).
