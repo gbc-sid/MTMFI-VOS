@@ -58,7 +58,7 @@ inference the video and evaluate the inference results
 * `--fast` reduces the number of optimizer iterations to  increase the speed
 * `--dev` denotes GPU id
 ### - example
-use model(only DAVIS) with MTM to evaluate DAVIS 2016 validation set in fast mode:  
+use model(only DAVIS) with MTM to evaluate DAVIS 2016 validation set in fast mode:   
 
     python evaluate.py --model  resnet101_dv_mtmfi.pth --dset dv2016val --seg initial --fast --dev cuda:0
 use model(DAVIS+YouTube-VOS)  with MTMFI to evaluate YouTubeVOS 2018 official validation set in original mode:  
