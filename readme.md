@@ -11,7 +11,7 @@ the network is based on FRTM-VOS [[code]](https://github.com/andr345/frtm-vos) [
 ## Network Architecture  
 ![Alt text](./pic/mtmfi-vos.jpg)
 
-## Requirments
+## Requirements
 * python 3.7.0
 * PyTorch 1.6.0
 * CUDA10.0 + cudnn7.6.4
