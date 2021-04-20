@@ -54,13 +54,13 @@ inference the video and evaluate the inference results
   | dv2017val | DAVIS 2017 validation set |
   | yt2018jjval | the split of YouTubeVOS 2018 "train_all_frames" |
   | yt2018val | YouTubeVOS 2018 official "valid_all_frames" set |
-* `--bise` has two mode: `initial`has only MTM, `bise` has both MTM and FI
+* `--seg` has two mode: `initial`has only MTM, `bise` has both MTM and FI
 * `--fast` reduces the number of optimizer iterations to  increase the speed
 * `--dev` denotes GPU id
 ### - example
 use model(only DAVIS) with MTM to evaluate DAVIS 2016 validation set in fast mode:  
 
-    python evaluate.py --model  resnet101_dv_mtmfi.pth --dset dv2016val --seg bise --fast --dev cuda:0
+    python evaluate.py --model  resnet101_dv_mtmfi.pth --dset dv2016val --seg initial --fast --dev cuda:0
 use model(DAVIS+YouTube-VOS)  with MTMFI to evaluate YouTubeVOS 2018 official validation set in original mode:  
 
     python evaluate.py --model  resnet101_all_mtmfi.pth --dset dv2016test --seg bise --dev cuda:0
@@ -68,7 +68,7 @@ use model(DAVIS+YouTube-VOS)  with MTMFI to evaluate YouTubeVOS 2018 official va
 ## Inference
 just inference the video
 
-    python inference.py --model <weight-name> --dset dv2016val (--fast)
+    python inference.py --model <weight-name> --seg bise --dset dv2016val (--fast) --dev cuda:0
 * `--model` is the name of the checkpoint to use in the `weights ` directory.
 * `--dset` is one of   
   | Name | Description |
@@ -78,7 +78,7 @@ just inference the video
   | ali2021test | Alibaba 2021 test set |
   | yt2018jjval | the split of YouTubeVOS 2018 "train_all_frames" |
   | yt2018val | YouTubeVOS 2018 official "valid_all_frames" set |
-* `--bise` has two mode: `initial`has only MTM, `bise` has both MTM and FI
+* `--seg` has two mode: `initial`has only MTM, `bise` has both MTM and FI
 * `--fast` reduces the number of optimizer iterations to  increase the speed
 * `--dev` denotes GPU id
   
