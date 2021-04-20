@@ -35,7 +35,8 @@ goto [website](https://drive.google.com/drive/folders/1bI5J1H3mxsIGo7Kp-pPZU8i6r
 ### Alibaba media
 this compeitition aims to segment the people in videos and doesn't supply the first annotations. Thus, we use PolarMask [[code]](https://github.com/xieenze/PolarMask) [[paper]](https://arxiv.org/pdf/1909.13226.pdf)to produce the masks of the first frame on each video.  
 the test dataset is tidying, just wait:)
-## Models  
+## Models 
+run `bash download.sh` or download models below to `weights` 
 | backbone | datasets | components | link |  
 | :---: | :---: | :---: | :---: |  
 | ResNet-101 | DAVIS | MTM | - |
