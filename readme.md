@@ -9,7 +9,8 @@ the network is based on FRTM-VOS [[code]](https://github.com/andr345/frtm-vos) [
 
 ![Alt text](./pic/625801.gif)
 ## Network Architecture  
-![Alt text](./pic/mtmfi-vos.jpg)
+To be continued
+<!-- ![Alt text](./pic/mtmfi-vos.jpg) -->
 
 ## Requirements
 * python 3.7.0
